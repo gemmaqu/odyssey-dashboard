@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "odyssey-backend",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-11-27",
+  // nodejs_compat lets postgres-js open TCP sockets from the Worker runtime.
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // Hyperdrive pools Postgres in production. In `wrangler dev` the Worker binds
+  // straight to the local Docker Postgres via `localConnectionString`, so no
+  // Cloudflare account or real Hyperdrive config is needed to run locally.
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "odyssey-local-placeholder",
+      "localConnectionString": "postgres://odyssey:odyssey@localhost:5432/odyssey"
+    }
+  ]
+}

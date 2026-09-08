@@ -1,0 +1,34 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["DATABASE_URL", "EXPO_PUBLIC_API_URL"],
+  "tasks": {
+    "gen:contract": {
+      "outputs": ["openapi.json"]
+    },
+    "gen:client": {
+      "dependsOn": ["@odyssey/backend#gen:contract"],
+      "outputs": ["src/generated/**"]
+    },
+    "build": {
+      "dependsOn": ["^build", "gen:client"],
+      "outputs": ["dist/**", ".expo/**", "web-build/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build", "gen:client"]
+    },
+    "lint": {},
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

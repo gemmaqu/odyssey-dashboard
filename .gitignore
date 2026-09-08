@@ -1,0 +1,30 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# build outputs
+dist/
+build/
+web-build/
+.expo/
+.turbo/
+*.tsbuildinfo
+
+# NOTE: generated API artifacts (services/backend/openapi.json and
+# packages/api-client/src/generated/**) ARE committed on purpose so the repo
+# browses + type-checks without a gen step. They are never hand-edited —
+# regenerate with `pnpm gen:contract`.
+
+# env
+.env
+.env.*
+!.env.example
+
+# wrangler / cloudflare
+.wrangler/
+.dev.vars
+
+# misc
+.DS_Store
+coverage/
+*.log
