@@ -1,15 +1,36 @@
 import { Divider, useTheme } from '@odyssey/ui';
-import React from 'react';
-import { ScrollView, useWindowDimensions, View } from 'react-native';
+import { usePathname } from 'expo-router';
+import React, { useEffect } from 'react';
+import { Platform, ScrollView, useWindowDimensions, View } from 'react-native';
 import { BrandMark, SidebarNav, ThemeToggle } from './Sidebar';
 
 const SIDEBAR_WIDTH = 264;
 const BREAKPOINT = 900;
 
+const PAGE_TITLES: Record<string, string> = {
+  '/': 'Home',
+  '/orders': 'Orders',
+  '/customers': 'CRM',
+  '/menu': 'Menu',
+  '/settings': 'Settings',
+  '/ui': 'UI Kit',
+};
+
+/** Sets the browser tab title on web so it reads "Odyssey", not the URL. */
+function useDocumentTitle(pathname: string) {
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+    const seg = `/${pathname.split('/')[1] ?? ''}`;
+    const label = PAGE_TITLES[seg];
+    document.title = label ? `Odyssey · ${label}` : 'Odyssey';
+  }, [pathname]);
+}
+
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
   const wide = width >= BREAKPOINT;
+  useDocumentTitle(usePathname());
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background, flexDirection: wide ? 'row' : 'column' }}>
