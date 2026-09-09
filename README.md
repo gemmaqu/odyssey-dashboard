@@ -141,4 +141,37 @@ scratch.
 - **State machine** (`packages/types`): transition legality, terminal states.
 - **Cart / money** (`apps/dashboard`, `packages/shared`): pricing math and parsing.
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for design decisions and tradeoffs.
+## Architecture decisions (short)
+
+Full detail in [ARCHITECTURE.md](./ARCHITECTURE.md). The key calls:
+
+- **Generated contract, single source of truth.** Types flow
+  `Drizzle schema → drizzle-zod → Hono/OpenAPI → Orval → React Query hooks`. The
+  frontend imports only generated hooks/types and never hand-writes backend DTOs.
+- **Order status defined once.** The enum + transition state machine live in
+  `packages/types` and are reused by the Postgres enum, the backend, and the UI — so
+  there are no duplicated status types across the stack.
+- **Logic lives in services/hooks, not screens.** Backend business rules are in
+  `services/backend/src/services`; the frontend wraps generated hooks in feature hooks;
+  pages stay presentational.
+- **Deliberate backend behavior.** Money is integer cents; order totals are computed
+  server-side from live prices; item name/price are snapshotted per line; status changes
+  go through a validated transition endpoint (never a loose client field).
+- **Token-driven design system.** All styling comes from centralized tokens + a semantic
+  light/dark theme in `packages/ui`.
+- **DB on Workers.** postgres-js behind a Hyperdrive binding, one connection per request;
+  local dev binds to Docker Postgres via `localConnectionString`.
+
+## Tradeoffs & incomplete areas (short)
+
+Full detail in [ARCHITECTURE.md](./ARCHITECTURE.md). In brief:
+
+- **No authentication / single-restaurant** — out of scope for the slice.
+- **Generated client is committed** so the repo browses and type-checks without a gen
+  step; it's still fully regenerable with `pnpm gen:contract`.
+- **Order pagination** is server-supported (`limit`/`offset`) but the UI loads a large
+  page rather than exposing pager controls.
+- **Settings is a single row**; opening-hours strings are lightly validated.
+- **Native is architecturally ready** (RN primitives, no web-only APIs) but only web has
+  been exercised.
+- **Testing is targeted, not exhaustive** — key order flows + pure logic, per the brief.
