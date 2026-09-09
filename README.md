@@ -37,36 +37,71 @@ packages/
 
 ## Prerequisites
 
-- Node ≥ 20 and **pnpm** (`corepack enable` or `npm i -g pnpm`)
-- **Docker** (for local Postgres)
+Install these first:
+
+- **Node ≥ 20** — https://nodejs.org
+- **pnpm** — `npm install -g pnpm` (or `corepack enable`)
+- **Docker Desktop** — https://www.docker.com/products/docker-desktop — and make sure
+  it is **running** before step 4 (the whale icon in the menu bar is steady). Docker
+  runs the local Postgres.
 
 ## Quick start
 
+Run these one line at a time from a terminal. Steps 1–6 are one terminal; step 7 is a
+**second** terminal.
+
 ```bash
-# 1. Install
+git clone https://github.com/gemmaqu/odyssey-dashboard.git
+```
+
+```bash
+cd odyssey-dashboard
+```
+
+```bash
 pnpm install
+```
 
-# 2. Copy env (defaults match docker-compose)
+```bash
 cp .env.example .env
+```
 
-# 3. Start Postgres, run migrations, and seed demo data
+```bash
 pnpm db:up
+```
+
+```bash
 pnpm db:migrate
+```
+
+```bash
 pnpm db:seed
-# (or do all three + reset in one go: pnpm db:reset)
+```
 
-# 4. Generate the API contract + client (already committed, but this refreshes it)
-pnpm gen:contract
-
-# 5. Run the backend (Cloudflare Worker via wrangler dev, on http://localhost:8787)
+```bash
 pnpm dev:backend
+```
 
-# 6. In another terminal, run the dashboard (web, on http://localhost:8081)
+Leave that running. Open a **new terminal**, then:
+
+```bash
+cd odyssey-dashboard
+```
+
+```bash
 pnpm dev:dashboard
 ```
 
-Open the dashboard, and visit **UI Kit** in the sidebar for the design-system
-showcase. The API docs (Swagger UI) are at `http://localhost:8787/docs`.
+Now open **http://localhost:8081** in your browser. The first load takes ~10–30s while
+it builds. Visit **UI Kit** in the sidebar for the design-system showcase, and the API
+docs (Swagger UI) are at **http://localhost:8787/docs**.
+
+> Steps 5–7 combined: `pnpm db:reset` re-creates + migrates + seeds in one command.
+> The generated API client is already committed; to regenerate it run `pnpm gen:contract`.
+>
+> **If `pnpm db:up` errors:** Docker Desktop isn't running — start it, wait for the whale
+> icon to settle, then re-run. **If a port is in use:** free ports 5432 (Postgres),
+> 8787 (backend), 8081 (dashboard).
 
 ## Seeding
 
